@@ -13,7 +13,7 @@ module.exports = {
       "layouts",
       { "Custom UI": ["custom_ui", "built_in_menus"] },
     ],
-    Appendix: ["supported_keyboards", "download_firmware"],
+    Appendix: ["supported_keyboards", "download_firmware", "linux"],
     "VIA Version 3": ["v3_changes"],
   },
 };
