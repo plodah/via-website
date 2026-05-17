@@ -32,40 +32,46 @@ For [reasons](https://github.com/systemd/systemd/issues/39056), rules allowing a
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="4653", ATTRS{idProduct}=="0001", MODE="0660", GROUP="users", TAG+="uaccess"
 ```
 
-> [!IMPORTANT] 
-> Always use **lower case** for any letters which appear in Vendor or Product ID's
-> e.g.  In some contexts, the ID may be formatted `0xCA75`. This would become `ATTRS{idVendor}=="ca75"` within your rules.
+> **--NOTE--**: **Always use lower case for the VID and PID values** 
+> ID's will appear capitalized in some contexts but should always be lower case within udev rules. 
+> e.g. chrome://usb-internals may show `0xCA75`. 
+> use `ATTRS{idVendor}=="ca75"` within udev rules.
 
-### Just allow everything! (I don't care that much.)
+### Allow Everything
+*Just make it work!*
+
 #### Manually 
 Create a text file, and save it to `/etc/udev/rules.d/55-via.rules`
 ```
-# This rule simply allows *any* hidraw device for members of the users group.
+# This rule allows access to *any* hidraw device for members of the users group.
 SUBSYSTEM=="hidraw", MODE="0660", GROUP="users", TAG+="uaccess"
 ```
-n.b. this assumes you're in the `users` group, which is not true for every distribution.
+The above assumes you're in the `users` group. Some distributions don't have a group by this name, so you may have to replace this with something else. See [what groups am i in?](#what-groups-am-i-in)
 
 #### One liner
 ```
 export MY_PGID=`id -g`; sudo --preserve-env=MY_PGID sh -c 'echo "SUBSYSTEM==\"hidraw\", MODE=\"0660\", GROUP=\"$MY_PGID\", TAG+=\"uaccess\"" > /etc/udev/rules.d/55-via.rules && udevadm control --reload && udevadm trigger'
 ```
 This will 
- - Check your primary group ID
+ - Check your primary group
  - Create /etc/udev/rules.d/55-via.rules to allow that group
  - Reload and re-evaluate udev rules
 
-### Finding the keyboards USB identifiers
-The ID's can be found in a few ways;
-- Via may show you the Vendor ID (VID) and Product ID (PID) in error messages.
+### Find a keyboards USB identifiers
+USB devices have a Vendor and Product ID. 
+Conventionally, all devices made by one company (the vendor!) would have the same **Vendor ID**. Each model then has a **Product ID**. The combination of the two are combined to uniquely identify a keyboard type.
+
+Here are a few ways to find these ID's:
 - Use your browsers usb-internals page 
   browse to  `chrome://usb-internals/`, click "Devices" at the top of the page and find your keyboard in the list
 - run `lsusb`, and find the device in the list. 
   `Bus 003 Device 004: ID 4653:0001 foostan crkbd`
   `                        VID:PID               `
+- Via may show you the Vendor ID (VID) and Product ID (PID) in error messages.
 
-### What group an I in?
-Just enter `groups` in your terminal emulator.
+### What groups an I in?
+Just enter `groups` or `id -Gn` in your terminal emulator.
 ```
-[tim@tim-pc ~]$ groups
-tim wheel
+[tim@tim-pc ~]$ id -Gn
+tim wheel 
 ```
