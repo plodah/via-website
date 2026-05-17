@@ -9,13 +9,12 @@ sidebar_label: Linux Considerations
 To get Via to connect to your keyboard successfully, you would usually need to set up a `udev` rule. 
 Without this in place, the error below may appear when authorizing a keyboard in Via. 
 
-```
-  NotAllowedError: Failed to open the device.
+>  NotAllowedError: Failed to open the device.
+> 
+>  Device: crkbd
+>  Vid: 0x4653
+>  Pid: 0x0001
 
-  Device: crkbd
-  Vid: 0x4653
-  Pid: 0x0001
-```
 
 The reason for this is that standard linux user accounts are not permitted to access to the `hidraw` device that VIA uses to communicate with your keyboard by default, so you have to create a rule to allow it.
 
@@ -40,7 +39,7 @@ SUBSYSTEM=="hidraw", ATTRS{idVendor}=="4653", ATTRS{idProduct}=="0001", MODE="06
 ### Allow Everything
 *Just make it work!*
 
-#### Manually 
+#### Add a rule Manually 
 Create a text file, and save it to `/etc/udev/rules.d/55-via.rules`
 ```
 # This rule allows access to *any* hidraw device for members of the users group.
@@ -48,7 +47,7 @@ SUBSYSTEM=="hidraw", MODE="0660", GROUP="users", TAG+="uaccess"
 ```
 The above assumes you're in the `users` group. Some distributions don't have a group by this name, so you may have to replace this with something else. See [what groups am i in?](#what-groups-am-i-in)
 
-#### One liner
+#### Copy and paste this one-liner command
 ```
 export MY_PGID=`id -g`; sudo --preserve-env=MY_PGID sh -c 'echo "SUBSYSTEM==\"hidraw\", MODE=\"0660\", GROUP=\"$MY_PGID\", TAG+=\"uaccess\"" > /etc/udev/rules.d/55-via.rules && udevadm control --reload && udevadm trigger'
 ```
