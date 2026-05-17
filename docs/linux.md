@@ -9,11 +9,11 @@ sidebar_label: Linux Considerations
 To get Via to connect to your keyboard successfully, you would usually need to set up a `udev` rule. 
 Without this in place, the error below may appear when authorizing a keyboard in Via. 
 
->  NotAllowedError: Failed to open the device.
+> NotAllowedError: Failed to open the device.
 > 
->  Device: crkbd
->  Vid: 0x4653
->  Pid: 0x0001
+> Device: crkbd <br>
+> Vid: 0x4653 <br>
+> Pid: 0x0001 <br>
 
 
 The reason for this is that standard linux user accounts are not permitted to access to the `hidraw` device that VIA uses to communicate with your keyboard by default, so you have to create a rule to allow it.
