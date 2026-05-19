@@ -25,7 +25,7 @@ Advice on where to position Via udev rules will vary by speaker, distribution an
 
 Rules created for Via should tag the devices as `uaccess` which will be picked up by the latter.
 
-## Example rules
+## Creating rules
 
 ### Allow Everything
 
